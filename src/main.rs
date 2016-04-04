@@ -3,9 +3,11 @@ extern crate glium;
 extern crate nalgebra as na;
 
 mod model_data;
+mod static_object;
 
 use glium::DisplayBuild;
 use glium::Surface;
+
 
 const VERTS: [model_data::Vertex; 6] = [
     model_data::Vertex{ position: ( 1.0,  0.0,  0.0) },
@@ -88,6 +90,10 @@ fn get_basic_shader(display: &glium::backend::glutin_backend::GlutinFacade) -> g
         uniform mat4 perspective;
         uniform mat4 modelMatrix;
         uniform mat4 viewMatrix;
+
+        uniform test {
+            vec3 somethingsomethingdarkside;
+        };
 
         out vec3 vertex_color;
 
@@ -195,11 +201,15 @@ fn main()
         //let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
         let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList, &INDICES).unwrap();
 
-        let uniforms = uniform!(
+        let uni_storage = glium::uniforms::UniformsStorage::new("test", 1.0f32);
+
+        let uniforms = uniform!{
                 modelMatrix: model_matrix,
                 perspective: perspective,
                 viewMatrix: view_matrix,
-            );
+
+            };
+
 
 
         target.draw((&vertex_buffer, &normal_buffer), &indices, &shader_program, &uniforms, &params).unwrap();
