@@ -79,6 +79,14 @@ fn get_view_matrix(position: &[f32; 3], direction: &[f32; 3]) -> [[f32; 4]; 4]
     ]
 }
 
+#[derive(Clone,Copy)]
+struct GlobalRenderParams
+{
+    view_matrix: [[f32;4];4],
+    projection_matrix: [[f32;4];4]
+}
+implement_uniform_block!(GlobalRenderParams, view_matrix, projection_matrix);
+
 fn get_basic_shader(display: &glium::backend::glutin_backend::GlutinFacade) -> glium::Program
 {
     let vertex_shader_src = r#"
@@ -87,12 +95,17 @@ fn get_basic_shader(display: &glium::backend::glutin_backend::GlutinFacade) -> g
         in vec3 position;
         in vec3 normal;
 
-        uniform mat4 perspective;
+        //uniform mat4 perspective;
+        //uniform mat4 viewMatrix;
         uniform mat4 modelMatrix;
-        uniform mat4 viewMatrix;
 
-        uniform test {
-            vec3 somethingsomethingdarkside;
+        //uniform test {
+        //    vec3 somethingsomethingdarkside;
+        //};
+        uniform worldData
+        {
+            mat4 view_matrix;
+            mat4 projection_matrix;
         };
 
         out vec3 vertex_color;
@@ -101,8 +114,8 @@ fn get_basic_shader(display: &glium::backend::glutin_backend::GlutinFacade) -> g
 
         void main()
         {
-            mat4 modelViewMatrix = viewMatrix * modelMatrix;
-            pos = perspective * modelViewMatrix * (vec4(position, 1.0));
+            mat4 modelViewMatrix = view_matrix * modelMatrix;
+            pos = projection_matrix * modelViewMatrix * (vec4(position, 1.0));
 
             vertex_color = (position.xyz + vec3(1, 1, 1)) / 2;
 
@@ -201,16 +214,23 @@ fn main()
         //let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
         let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList, &INDICES).unwrap();
 
-        let uni_storage = glium::uniforms::UniformsStorage::new("test", 1.0f32);
+        //let uni_storage = glium::uniforms::UniformsStorage::new("modelMatrix", model_matrix);
+        //let uni_storage = uni_storage.add("perspective", perspective);
+        //let uni_storage = uni_storage.add("viewMatrix", view_matrix);
 
+        let render_params = GlobalRenderParams{ view_matrix: view_matrix, projection_matrix: perspective };
+
+        let world_buffer = glium::uniforms::UniformBuffer::new(&display, render_params).unwrap();
+
+        
         let uniforms = uniform!{
                 modelMatrix: model_matrix,
                 perspective: perspective,
                 viewMatrix: view_matrix,
 
+                worldData: &world_buffer
             };
-
-
+        
 
         target.draw((&vertex_buffer, &normal_buffer), &indices, &shader_program, &uniforms, &params).unwrap();
 
