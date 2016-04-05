@@ -170,7 +170,6 @@ fn main()
                             .build_glium()
                             .unwrap();
 
-
     let mut model_matrix = [
         [1.0, 0.0, 0.0, 0.0],
         [0.0, 1.0, 0.0, 0.0],
@@ -213,10 +212,6 @@ fn main()
         let normal_buffer = glium::VertexBuffer::new(&display, &NORMALS).unwrap();
         //let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
         let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList, &INDICES).unwrap();
-
-        //let uni_storage = glium::uniforms::UniformsStorage::new("modelMatrix", model_matrix);
-        //let uni_storage = uni_storage.add("perspective", perspective);
-        //let uni_storage = uni_storage.add("viewMatrix", view_matrix);
 
         let render_params = GlobalRenderParams{ view_matrix: view_matrix, projection_matrix: perspective };
 
