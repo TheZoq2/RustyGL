@@ -4,6 +4,9 @@ extern crate nalgebra as na;
 
 mod model_data;
 mod static_object;
+mod global_render_params;
+
+use global_render_params::GlobalRenderParams;
 
 use glium::DisplayBuild;
 use glium::Surface;
@@ -28,7 +31,7 @@ const NORMALS: [model_data::Normal; 6] = [
 
 const INDICES: [u16; 24] = [
     0,1,2,
-    1,2,4,
+    0,2,4,
     0,4,5,
     0,5,1,
     3,1,2,
@@ -79,13 +82,6 @@ fn get_view_matrix(position: &[f32; 3], direction: &[f32; 3]) -> [[f32; 4]; 4]
     ]
 }
 
-#[derive(Clone,Copy)]
-struct GlobalRenderParams
-{
-    view_matrix: [[f32;4];4],
-    projection_matrix: [[f32;4];4]
-}
-implement_uniform_block!(GlobalRenderParams, view_matrix, projection_matrix);
 
 fn get_basic_shader(display: &glium::backend::glutin_backend::GlutinFacade) -> glium::Program
 {
@@ -170,12 +166,19 @@ fn main()
                             .build_glium()
                             .unwrap();
 
+    let mut na_model_matrix: na::Mat4<f32> = na::one();
+
+    na_model_matrix.m14 = 1.0;
+
+    //println!("{}", na_model_matrix.as_ref());
+
     let mut model_matrix = [
         [1.0, 0.0, 0.0, 0.0],
         [0.0, 1.0, 0.0, 0.0],
         [0.0, 0.0, 1.0, 0.0],
         [0.0, 0.0, 0.0, 1.0f32],
     ];
+
 
     let shader_program = get_basic_shader(&display);
 
@@ -191,7 +194,7 @@ fn main()
 
     loop
     {
-        t += 0.02;
+        t += 0.01;
 
         //Rotate the model
         model_matrix[0][0] = t.cos();
