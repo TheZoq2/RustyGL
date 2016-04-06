@@ -168,7 +168,36 @@ fn main()
 
     let mut na_model_matrix: na::Mat4<f32> = na::one();
 
-    na_model_matrix.m14 = 1.0;
+    let test_verts = vec!{
+            model_data::Vertex{position: ( 1.0,  0.0,  0.0)},
+            model_data::Vertex{position: ( 0.0,  1.0,  0.0)},
+            model_data::Vertex{position: ( 0.0,  0.0,  1.0)},
+            model_data::Vertex{position: ( 0.0,  0.0,  0.0)},
+            model_data::Vertex{position: (-1.0,  0.0,  0.0)},
+            model_data::Vertex{position: ( 0.0, -1.0,  0.0)},
+            model_data::Vertex{position: ( 0.0,  0.0, -1.0)}
+        };
+    let test_normals = vec!{
+            model_data::Normal{normal: ( 1.0,  0.0,  0.0)},
+            model_data::Normal{normal: ( 0.0,  1.0,  0.0)},
+            model_data::Normal{normal: ( 0.0,  0.0,  1.0)},
+            model_data::Normal{normal: ( 0.0,  0.0,  0.0)},
+            model_data::Normal{normal: (-1.0,  0.0,  0.0)},
+            model_data::Normal{normal: ( 0.0, -1.0,  0.0)},
+            model_data::Normal{normal: ( 0.0,  0.0, -1.0)}
+        };
+
+    let test_indices = vec!{
+        0,1,2,
+        0,2,4,
+        0,4,5,
+        0,5,1,
+        3,1,2,
+        3,2,4,
+        3,4,5,
+        3,5,1,
+    };
+    let test_object = static_object::StaticObject::new(&display, &test_verts, &test_normals, &test_indices);
 
     //println!("{}", na_model_matrix.as_ref());
 

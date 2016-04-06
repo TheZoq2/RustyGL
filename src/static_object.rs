@@ -25,7 +25,7 @@ impl StaticObject
     /*
      *
      */
-    fn new(mut display: glium::Display, verts: &Vec<model_data::Vertex>, normals: &Vec<model_data::Normal>, indices: &Vec<u16>) -> StaticObject
+    fn new(mut display: &glium::Display, verts: &Vec<model_data::Vertex>, normals: &Vec<model_data::Normal>, indices: &Vec<u16>) -> StaticObject
     {
         //let indices_slice = indices.as_slice();
         let indices_slice: [u16; 6] = [0,1,2,3,4,5];
