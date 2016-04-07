@@ -91,13 +91,8 @@ fn get_basic_shader(display: &glium::backend::glutin_backend::GlutinFacade) -> g
         in vec3 position;
         in vec3 normal;
 
-        //uniform mat4 perspective;
-        //uniform mat4 viewMatrix;
         uniform mat4 modelMatrix;
 
-        //uniform test {
-        //    vec3 somethingsomethingdarkside;
-        //};
         uniform worldData
         {
             mat4 view_matrix;
@@ -166,13 +161,10 @@ fn main()
                             .build_glium()
                             .unwrap();
 
-    let mut na_model_matrix: na::Mat4<f32> = na::one();
-
     let test_verts = vec!{
             model_data::Vertex{position: ( 1.0,  0.0,  0.0)},
             model_data::Vertex{position: ( 0.0,  1.0,  0.0)},
             model_data::Vertex{position: ( 0.0,  0.0,  1.0)},
-            model_data::Vertex{position: ( 0.0,  0.0,  0.0)},
             model_data::Vertex{position: (-1.0,  0.0,  0.0)},
             model_data::Vertex{position: ( 0.0, -1.0,  0.0)},
             model_data::Vertex{position: ( 0.0,  0.0, -1.0)}
@@ -197,7 +189,7 @@ fn main()
         3,4,5,
         3,5,1,
     };
-    let test_object = static_object::StaticObject::new(&display, &test_verts, &test_normals, &test_indices);
+    let mut test_object = static_object::StaticObject::new(&display, &test_verts, &test_normals, &test_indices);
 
     //println!("{}", na_model_matrix.as_ref());
 
@@ -205,7 +197,7 @@ fn main()
         [1.0, 0.0, 0.0, 0.0],
         [0.0, 1.0, 0.0, 0.0],
         [0.0, 0.0, 1.0, 0.0],
-        [0.0, 0.0, 0.0, 1.0f32],
+        [0.0, 0.0, -2.0, 1.0f32],
     ];
 
 
@@ -260,6 +252,9 @@ fn main()
         
 
         target.draw((&vertex_buffer, &normal_buffer), &indices, &shader_program, &uniforms, &params).unwrap();
+
+        test_object.set_position(&na::Vec4::new(0.0, 0.0, t.cos(), 1.0));
+        test_object.draw(&mut target, &shader_program, &world_buffer, &params);
 
         //Finish drawing and send the result off to the window
         target.finish().unwrap();

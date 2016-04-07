@@ -6,6 +6,7 @@ use global_render_params;
 
 use glium::Surface;
 use na::Row;
+use na::Col;
 
 pub struct StaticObject
 {
@@ -25,30 +26,30 @@ impl StaticObject
     /*
      *
      */
-    fn new(mut display: &glium::Display, verts: &Vec<model_data::Vertex>, normals: &Vec<model_data::Normal>, indices: &Vec<u16>) -> StaticObject
+    pub fn new(mut display: &glium::Display, verts: &Vec<model_data::Vertex>, normals: &Vec<model_data::Normal>, indices: &Vec<u16>) -> StaticObject
     {
-        //let indices_slice = indices.as_slice();
-        let indices_slice: [u16; 6] = [0,1,2,3,4,5];
-
         StaticObject{
             verts: verts.clone(),
             normals: normals.clone(),
             indices: indices.clone(),
 
-            vertex_buffer: glium::VertexBuffer::new(&display, verts).unwrap(),
-            normal_buffer: glium::VertexBuffer::new(&display, normals).unwrap(),
-            index_buffer: glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList, &indices_slice).unwrap(),
+            vertex_buffer: glium::VertexBuffer::new(display, verts).unwrap(),
+            normal_buffer: glium::VertexBuffer::new(display, normals).unwrap(),
+            index_buffer: glium::IndexBuffer::new(display, glium::index::PrimitiveType::TrianglesList, &indices).unwrap(),
 
-            transform: na::zero()
+            transform: na::one()
         }
     }
 
-    fn draw(&self, target: &mut glium::Frame, 
+    pub fn draw(&self, target: &mut glium::Frame, 
                 shader_program: &glium::Program, 
                 uniform_block: &glium::uniforms::UniformBuffer<global_render_params::GlobalRenderParams>, 
                 draw_parameters: &glium::DrawParameters)
     {
-        let uniforms = uniform!{global_params: uniform_block, transform_matrix: self.transform.as_ref().clone()};
+        let uniforms = uniform!{
+                    worldData: uniform_block, 
+                    modelMatrix: self.transform.as_ref().clone()
+                };
 
         target.draw((&self.vertex_buffer, &self.normal_buffer), 
                         //&self.indices, 
@@ -58,10 +59,10 @@ impl StaticObject
                         draw_parameters).unwrap();
     }
 
-    fn set_position(&mut self, pos: &na::Vec4<f32>)
+    pub fn set_position(&mut self, pos: &na::Vec4<f32>)
     {
         //na::translate(&self.transform, offset);
-        self.transform.set_row(4, pos.clone());
+        self.transform.set_col(3, pos.clone());
     }
 }
 
