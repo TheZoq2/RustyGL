@@ -10,6 +10,10 @@ use global_render_params::GlobalRenderParams;
 
 use glium::DisplayBuild;
 use glium::Surface;
+use std::error::Error;
+use std::fs::File;
+use std::io::prelude::*;
+use std::path::Path;
 
 
 const VERTS: [model_data::Vertex; 6] = [
@@ -132,6 +136,34 @@ fn get_basic_shader(display: &glium::backend::glutin_backend::GlutinFacade) -> g
     glium::Program::from_source(display, vertex_shader_src, fragment_shader_src, None).unwrap()
 }
 
+fn load_whole_file(path: &String) -> String
+{
+    let file_path = std::path::Path::new(&path);
+
+    let mut file = match std::fs::File::open(&file_path){
+        Err(why) => panic!("Failed to open file {}, {}", &path, Error::description(&why)),
+
+        Ok(open_file) => open_file
+    };
+
+    let mut result = String::new();
+    match file.read_to_string(&mut result) {
+        Err(why) => panic!("Failed to read content of file {}, {}", &path, Error::description(&why)),
+        Ok(a) => a
+    };
+
+    result
+}
+fn load_Shader(display: &glium::Display, vert_path: &String, frag_path: &String)
+    -> glium::Program
+{
+    let vertex_shader_src = load_whole_file(vert_path);
+    let fragment_shader_src = load_whole_file(frag_path);
+
+    //Set up the shader
+    glium::Program::from_source(display, vertex_shader_src.as_str(), fragment_shader_src.as_str(), None).unwrap()
+}
+
 fn get_perspective_matrix(target: &glium::Frame) -> [[f32; 4]; 4]
 {
     let (width, height) = target.get_dimensions();
@@ -154,7 +186,6 @@ fn get_perspective_matrix(target: &glium::Frame) -> [[f32; 4]; 4]
 fn main() 
 {
     let mut t: f32 = 0.0;
-
 
     let display = glium::glutin::WindowBuilder::new()
                             .with_depth_buffer(24)
@@ -191,8 +222,6 @@ fn main()
     };
     let mut test_object = static_object::StaticObject::new(&display, &test_verts, &test_normals, &test_indices);
 
-    //println!("{}", na_model_matrix.as_ref());
-
     let mut model_matrix = [
         [1.0, 0.0, 0.0, 0.0],
         [0.0, 1.0, 0.0, 0.0],
@@ -201,7 +230,8 @@ fn main()
     ];
 
 
-    let shader_program = get_basic_shader(&display);
+    //let shader_program = get_basic_shader(&display);
+    let shader_program = load_Shader(&display, &"data/shaders/basic.vert".to_string(), &"data/shaders/basic.frag".to_string());
 
 
     let params = glium::DrawParameters {

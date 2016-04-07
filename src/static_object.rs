@@ -24,7 +24,7 @@ pub struct StaticObject
 impl StaticObject
 {
     /*
-     *
+     * Creates a new object by cloning the vertecies, normals and indicies
      */
     pub fn new(mut display: &glium::Display, verts: &Vec<model_data::Vertex>, normals: &Vec<model_data::Normal>, indices: &Vec<u16>) -> StaticObject
     {
