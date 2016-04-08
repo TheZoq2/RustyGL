@@ -12,6 +12,7 @@ uniform worldData
     mat4 projection_matrix;
 };
 
+
 out vec3 vertex_color;
 
 vec4 pos;

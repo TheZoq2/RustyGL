@@ -5,6 +5,7 @@ extern crate nalgebra as na;
 mod model_data;
 mod static_object;
 mod global_render_params;
+mod lights;
 
 use global_render_params::GlobalRenderParams;
 
@@ -169,7 +170,7 @@ fn get_perspective_matrix(target: &glium::Frame) -> [[f32; 4]; 4]
     let (width, height) = target.get_dimensions();
     let aspect_ratio = height as f32 / width as f32;
 
-    let fov :f32 = 3.14 / 3.0;
+    let fov :f32 = 3.14 / 2.0;
     let zfar :f32 = 4096.0;
     let znear :f32 = 0.1;
 
@@ -226,7 +227,7 @@ fn main()
         [1.0, 0.0, 0.0, 0.0],
         [0.0, 1.0, 0.0, 0.0],
         [0.0, 0.0, 1.0, 0.0],
-        [0.0, 0.0, -2.0, 1.0f32],
+        [-2.0, 0.0, 0.0, 1.0f32],
     ];
 
 
@@ -259,7 +260,7 @@ fn main()
         //Creating the perspective matrix
         let perspective = get_perspective_matrix(&target);
 
-        let view_matrix = get_view_matrix(&[2.0, 1.0, 1.0], &[-2.0, -1.0, -1.0]);
+        let view_matrix = get_view_matrix(&[0.0, 0.0, 4.0], &[0.0, 0.0, -1.0]);
 
 
         let vertex_buffer = glium::VertexBuffer::new(&display, &VERTS).unwrap();
@@ -283,7 +284,7 @@ fn main()
 
         target.draw((&vertex_buffer, &normal_buffer), &indices, &shader_program, &uniforms, &params).unwrap();
 
-        test_object.set_position(&na::Vec4::new(0.0, 0.0, t.cos(), 1.0));
+        test_object.set_position(&na::Vec4::new(t.cos(), 0.0, 0.0, 1.0));
         test_object.draw(&mut target, &shader_program, &world_buffer, &params);
 
         //Finish drawing and send the result off to the window
