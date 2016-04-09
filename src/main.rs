@@ -1,4 +1,7 @@
+#![allow(dead_code)]
 #[macro_use]
+
+
 extern crate glium;
 extern crate nalgebra as na;
 
@@ -12,9 +15,7 @@ use global_render_params::GlobalRenderParams;
 use glium::DisplayBuild;
 use glium::Surface;
 use std::error::Error;
-use std::fs::File;
 use std::io::prelude::*;
-use std::path::Path;
 
 
 const VERTS: [model_data::Vertex; 6] = [
@@ -155,7 +156,7 @@ fn load_whole_file(path: &String) -> String
 
     result
 }
-fn load_Shader(display: &glium::Display, vert_path: &String, frag_path: &String)
+fn load_shader(display: &glium::Display, vert_path: &String, frag_path: &String)
     -> glium::Program
 {
     let vertex_shader_src = load_whole_file(vert_path);
@@ -232,7 +233,7 @@ fn main()
 
 
     //let shader_program = get_basic_shader(&display);
-    let shader_program = load_Shader(&display, &"data/shaders/basic.vert".to_string(), &"data/shaders/basic.frag".to_string());
+    let shader_program = load_shader(&display, &"data/shaders/basic.vert".to_string(), &"data/shaders/basic.frag".to_string());
 
 
     let params = glium::DrawParameters {
@@ -243,6 +244,8 @@ fn main()
         },
         .. Default::default()
     };
+
+    let light = lights::LightUniform::new();
 
     loop
     {
@@ -269,6 +272,7 @@ fn main()
         let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList, &INDICES).unwrap();
 
         let render_params = GlobalRenderParams{ view_matrix: view_matrix, projection_matrix: perspective };
+        let light_buffer = glium::uniforms::UniformBuffer::new(&display, light).unwrap();
 
         let world_buffer = glium::uniforms::UniformBuffer::new(&display, render_params).unwrap();
 
@@ -279,8 +283,8 @@ fn main()
                 viewMatrix: view_matrix,
 
                 worldData: &world_buffer
+
             };
-        
 
         target.draw((&vertex_buffer, &normal_buffer), &indices, &shader_program, &uniforms, &params).unwrap();
 

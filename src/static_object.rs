@@ -3,9 +3,9 @@ extern crate nalgebra as na;
 use model_data;
 use glium;
 use global_render_params;
+use lights;
 
 use glium::Surface;
-use na::Row;
 use na::Col;
 
 pub struct StaticObject
@@ -26,7 +26,7 @@ impl StaticObject
     /*
      * Creates a new object by cloning the vertecies, normals and indicies
      */
-    pub fn new(mut display: &glium::Display, verts: &Vec<model_data::Vertex>, normals: &Vec<model_data::Normal>, indices: &Vec<u16>) -> StaticObject
+    pub fn new(display: &glium::Display, verts: &Vec<model_data::Vertex>, normals: &Vec<model_data::Normal>, indices: &Vec<u16>) -> StaticObject
     {
         StaticObject{
             verts: verts.clone(),
@@ -44,10 +44,12 @@ impl StaticObject
     pub fn draw(&self, target: &mut glium::Frame, 
                 shader_program: &glium::Program, 
                 uniform_block: &glium::uniforms::UniformBuffer<global_render_params::GlobalRenderParams>, 
+                light_uniform_block: &glium::uniforms::UniformBuffer<lights::LightUniform>,
                 draw_parameters: &glium::DrawParameters)
     {
         let uniforms = uniform!{
                     worldData: uniform_block, 
+                    lights: light_uniform_block,
                     modelMatrix: self.transform.as_ref().clone()
                 };
 
