@@ -9,10 +9,11 @@ const MAX_SPHERICAL_LIGHTS: u32 = 32;
 #[derive(Copy, Clone)]
 pub struct SphericalLight
 {
-    position: na::Vec3<f32>,
-    color: na::Vec3<f32>,
+    position: [f32; 3],
+    color: [f32; 3],
     range: f32
 }
+implement_uniform_block!(SphericalLight, position, color, range);
 
 impl SphericalLight
 {
@@ -20,8 +21,8 @@ impl SphericalLight
     {
         SphericalLight
         {
-            position: na::zero(),
-            color: na::one(),
+            position: [0.0; 3],
+            color: [0.0; 3],
             range: 0.0
         }
     }
@@ -33,24 +34,25 @@ pub struct LightUniform
     sphere_light_count: u32,
     sphere_lights: [SphericalLight; MAX_SPHERICAL_LIGHTS as usize]
 }
+implement_uniform_block!(LightUniform, sphere_light_count, sphere_lights);
 
 impl glium::uniforms::Uniforms for LightUniform
 {
     fn visit_values<'a, F: FnMut(&str, UniformValue<'a>)>(&'a self, mut f: F) {
-        f("light_count", UniformValue::UnsignedInt(self.sphere_light_count));
+        f("sphere_light_count", UniformValue::UnsignedInt(self.sphere_light_count));
 
         for i in 0..MAX_SPHERICAL_LIGHTS
         {
             f(&format!(
-                    "spherical_light[{}].position", i), 
-                    UniformValue::Vec3(self.sphere_lights[i as usize].position.as_ref().clone())
+                    "sphere_lights[{}].position", i), 
+                    UniformValue::Vec3(self.sphere_lights[i as usize].position.clone())
                 );
             f(&format!(
-                    "spherical_light[{}].color", i), 
-                    UniformValue::Vec3(self.sphere_lights[i as usize].color.as_ref().clone())
+                    "sphere_lights[{}].color", i), 
+                    UniformValue::Vec3(self.sphere_lights[i as usize].color.clone())
                 );
             f(&format!(
-                    "spherical_light[{}].range", i), 
+                    "sphere_lights[{}].range", i), 
                     UniformValue::Float(self.sphere_lights[i as usize].range)
                 );
         }

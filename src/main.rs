@@ -289,7 +289,7 @@ fn main()
         target.draw((&vertex_buffer, &normal_buffer), &indices, &shader_program, &uniforms, &params).unwrap();
 
         test_object.set_position(&na::Vec4::new(t.cos(), 0.0, 0.0, 1.0));
-        test_object.draw(&mut target, &shader_program, &world_buffer, &params);
+        test_object.draw(&mut target, &shader_program, &world_buffer, &light_buffer, &params);
 
         //Finish drawing and send the result off to the window
         target.finish().unwrap();

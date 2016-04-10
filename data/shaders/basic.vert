@@ -1,5 +1,13 @@
 
 #version 140
+layout(std140) uniform;
+
+struct SphericalLight
+{
+    vec3 position;
+    vec3 color;
+    float range;
+};
 
 in vec3 position;
 in vec3 normal;
@@ -10,6 +18,17 @@ uniform worldData
 {
     mat4 view_matrix;
     mat4 projection_matrix;
+};
+
+
+
+const int MAX_LIGHTS = 32;
+
+uniform lights
+{
+    uint sphere_light_count;
+
+    SphericalLight sphere_lights[32];
 };
 
 
@@ -26,4 +45,5 @@ void main()
 
     gl_Position = pos;
 }
+
 
