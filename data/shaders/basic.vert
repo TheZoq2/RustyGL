@@ -4,9 +4,9 @@ layout(std140) uniform;
 
 struct SphericalLight
 {
+    float range;
     vec3 position;
     vec3 color;
-    float range;
 };
 
 in vec3 position;
@@ -24,12 +24,14 @@ uniform worldData
 
 const int MAX_LIGHTS = 32;
 
-uniform lights
-{
-    uint sphere_light_count;
+//uniform lights
+//{
+//    uint sphere_light_count;
+//
+//    SphericalLight sphere_lights[32];
+//};
 
-    SphericalLight sphere_lights[32];
-};
+uniform SphericalLight sphere;
 
 
 out vec3 vertex_color;

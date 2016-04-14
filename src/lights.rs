@@ -11,9 +11,19 @@ pub struct SphericalLight
 {
     position: [f32; 3],
     color: [f32; 3],
-    range: f32
+    range: f32,
 }
 implement_uniform_block!(SphericalLight, position, color, range);
+
+//Testing, remove if it doesn't work TODO
+impl glium::uniforms::Uniforms for SphericalLight
+{
+    fn visit_values<'a, F: FnMut(&str, UniformValue<'a>)>(&'a self, mut f: F) {
+        f("position",  UniformValue::Vec3(self.position.clone()));
+        f("position",  UniformValue::Vec3(self.color.clone()));
+        f("color",  UniformValue::Float(self.range.clone()));
+    }
+}
 
 impl SphericalLight
 {
@@ -23,7 +33,7 @@ impl SphericalLight
         {
             position: [0.0; 3],
             color: [0.0; 3],
-            range: 0.0
+            range: 0.0,
         }
     }
 }
