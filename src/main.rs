@@ -273,7 +273,7 @@ fn main()
 
         let render_params = GlobalRenderParams{ view_matrix: view_matrix, projection_matrix: perspective };
         let light_buffer = glium::uniforms::UniformBuffer::new(&display, light).unwrap();
-        let sphere_buffer = glium::uniforms::UniformBuffer::new(&display, lights::SphericalLight::new());
+        //let sphere_buffer = glium::uniforms::UniformBuffer::new(&display, lights::SphericalLight::new());
 
         let world_buffer = glium::uniforms::UniformBuffer::new(&display, render_params).unwrap();
 
@@ -285,7 +285,7 @@ fn main()
 
                 worldData: &world_buffer,
                 lights: light_buffer,
-                sphere: &sphere_buffer,
+                //sphere: &sphere_buffer,
             };
 
         target.draw((&vertex_buffer, &normal_buffer), &indices, &shader_program, &uniforms, &params).unwrap();
