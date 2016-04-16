@@ -42,9 +42,11 @@ impl SphericalLight
 pub struct LightUniform
 {
     sphere_light_count: u32,
-    sphere_lights: [SphericalLight; MAX_SPHERICAL_LIGHTS as usize]
+    sphere_lights: [SphericalLight; MAX_SPHERICAL_LIGHTS as usize],
+
+    padding: [f32; 3],
 }
-implement_uniform_block!(LightUniform, sphere_light_count, sphere_lights);
+implement_uniform_block!(LightUniform, sphere_light_count, sphere_lights, padding);
 
 impl glium::uniforms::Uniforms for LightUniform
 {
@@ -76,7 +78,8 @@ impl LightUniform
         LightUniform
         {
             sphere_light_count: 0,
-            sphere_lights: [SphericalLight::new(); MAX_SPHERICAL_LIGHTS as usize]
+            sphere_lights: [SphericalLight::new(); MAX_SPHERICAL_LIGHTS as usize],
+            padding: [0.0; 3]
         }
     }
 

@@ -271,10 +271,10 @@ fn main()
         //let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
         let indices = glium::IndexBuffer::new(&display, glium::index::PrimitiveType::TrianglesList, &INDICES).unwrap();
 
-        let render_params = GlobalRenderParams{ view_matrix: view_matrix, projection_matrix: perspective };
         let light_buffer = glium::uniforms::UniformBuffer::new(&display, light).unwrap();
-        //let sphere_buffer = glium::uniforms::UniformBuffer::new(&display, lights::SphericalLight::new());
+        let sphere_buffer = glium::uniforms::UniformBuffer::new(&display, lights::SphericalLight::new()).unwrap();
 
+        let render_params = GlobalRenderParams{ view_matrix: view_matrix, projection_matrix: perspective };
         let world_buffer = glium::uniforms::UniformBuffer::new(&display, render_params).unwrap();
 
         
@@ -284,8 +284,8 @@ fn main()
                 viewMatrix: view_matrix,
 
                 worldData: &world_buffer,
-                lights: light_buffer,
-                //sphere: &sphere_buffer,
+                lights: &light_buffer,
+                sphere: &sphere_buffer,
             };
 
         target.draw((&vertex_buffer, &normal_buffer), &indices, &shader_program, &uniforms, &params).unwrap();
