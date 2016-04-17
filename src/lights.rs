@@ -36,6 +36,11 @@ impl SphericalLight
             range: 0.0,
         }
     }
+
+    pub fn set_position(mut self, position: [f32; 3])
+    {
+        self.position = position;
+    }
 }
 
 #[derive(Copy, Clone)]

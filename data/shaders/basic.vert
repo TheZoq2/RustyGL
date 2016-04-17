@@ -2,12 +2,6 @@
 #version 140
 layout(std140) uniform;
 
-struct SphericalLight
-{
-    float range;
-    vec3 position;
-    vec3 color;
-};
 
 in vec3 position;
 in vec3 normal;
@@ -22,26 +16,21 @@ uniform worldData
 
 
 
-const int MAX_LIGHTS = 32;
-
-//uniform lights
-//{
-//    uint sphere_light_count;
-//
-//    SphericalLight sphere_lights[32];
-//};
-
-uniform SphericalLight sphere;
-
-
 out vec3 vertex_color;
+
+//Position and normal in the world of the vertex
+out vec4 vertex_position;
+out vec3 vertex_normal;
 
 vec4 pos;
 
 void main()
 {
     mat4 modelViewMatrix = view_matrix * modelMatrix;
-    pos = projection_matrix * modelViewMatrix * (vec4(position, 1.0));
+    vertex_position = modelViewMatrix * (vec4(position, 1.0));
+    pos = projection_matrix * vertex_position;
+
+    vertex_normal = transpose(inverse(mat3(modelMatrix))) * normal;
 
     vertex_color = (position.xyz + vec3(1, 1, 1)) / 2;
 

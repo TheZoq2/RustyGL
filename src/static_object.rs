@@ -44,12 +44,12 @@ impl StaticObject
     pub fn draw(&self, target: &mut glium::Frame, 
                 shader_program: &glium::Program, 
                 uniform_block: &glium::uniforms::UniformBuffer<global_render_params::GlobalRenderParams>, 
-                light_uniform_block: &glium::uniforms::UniformBuffer<lights::LightUniform>,
+                sphere_light_buffer: &glium::uniforms::UniformBuffer<lights::SphericalLight>,
                 draw_parameters: &glium::DrawParameters)
     {
         let uniforms = uniform!{
                     worldData: uniform_block, 
-                    lights: light_uniform_block,
+                    sphere_light: sphere_light_buffer,
                     modelMatrix: self.transform.as_ref().clone()
                 };
 
