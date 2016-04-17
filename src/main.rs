@@ -9,13 +9,12 @@ mod model_data;
 mod static_object;
 mod global_render_params;
 mod lights;
+mod files;
 
 use global_render_params::GlobalRenderParams;
 
 use glium::DisplayBuild;
 use glium::Surface;
-use std::error::Error;
-use std::io::prelude::*;
 
 
 const VERTS: [model_data::Vertex; 6] = [
@@ -138,29 +137,11 @@ fn get_basic_shader(display: &glium::backend::glutin_backend::GlutinFacade) -> g
     glium::Program::from_source(display, vertex_shader_src, fragment_shader_src, None).unwrap()
 }
 
-fn load_whole_file(path: &String) -> String
-{
-    let file_path = std::path::Path::new(&path);
-
-    let mut file = match std::fs::File::open(&file_path){
-        Err(why) => panic!("Failed to open file {}, {}", &path, Error::description(&why)),
-
-        Ok(open_file) => open_file
-    };
-
-    let mut result = String::new();
-    match file.read_to_string(&mut result) {
-        Err(why) => panic!("Failed to read content of file {}, {}", &path, Error::description(&why)),
-        Ok(a) => a
-    };
-
-    result
-}
 fn load_shader(display: &glium::Display, vert_path: &String, frag_path: &String)
     -> glium::Program
 {
-    let vertex_shader_src = load_whole_file(vert_path);
-    let fragment_shader_src = load_whole_file(frag_path);
+    let vertex_shader_src = files::load_whole_file(vert_path);
+    let fragment_shader_src = files::load_whole_file(frag_path);
 
     //Set up the shader
     glium::Program::from_source(display, vertex_shader_src.as_str(), fragment_shader_src.as_str(), None).unwrap()
