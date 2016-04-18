@@ -10,6 +10,7 @@ mod static_object;
 mod global_render_params;
 mod lights;
 mod files;
+mod obj_loader;
 
 use global_render_params::GlobalRenderParams;
 
