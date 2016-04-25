@@ -5,7 +5,7 @@ pub struct ObjectData
     pub verts: Vec<[f32; 3]>,
     pub normals: Vec<[f32; 3]>,
     pub uvs: Vec<[f32; 3]>,
-    pub faces: Vec<u8>,
+    pub faces: Vec<u32>,
 }
 
 fn add_vertex(vert: [f32; 3], obj_data: &mut ObjectData)
@@ -35,9 +35,38 @@ fn parse_coord_line(coord_strs: &Vec<&str>) -> [f32; 3]
 
     return coords;
 }
-fn parse_face_line(face_strs: &Vec<&str>, obj_data: &mut ObjectData)
+fn parse_face_line(face_strs: &Vec<&str>, obj_data: &mut ObjectData, normal_list: &Vec<[f32; 3]>)
 {
-    
+    for face in face_strs
+    {
+        let face_params: Vec<&str> = face_strs.split("/").collect();
+
+        if segments.len() == 3
+        {
+            let mut face_index = 0;
+            let mut normal_index = 0;
+
+            match face_params[0].parse::<u32>()
+            {
+                Ok(val) => face_index = val,
+                Err(e) => panic!("Failed to load .obj file, malformed vertex index in face. {}\n{}", face_params[0], e)
+            }
+            match face_params[0].parse::<u32>()
+            {
+                Ok(val) => normal_index = val,
+                Err(e) => panic!("Failed to load .obj file, malformed normal index in face. {}\n{}", face_params[0], e)
+            }
+
+            //We have loaded all the index data, add it to the model.
+            let added_normal = normal_list[normal_index];
+
+            obj_data.normals[added_normal] += added_normal;
+        }
+        else
+        {
+            panic!("Wrong amount of arguments in 'face' part of .obj file. Should be vertex/uv/normal");
+        }
+    }
 }
 
 pub fn load_obj_file(path :&String) -> ObjectData
