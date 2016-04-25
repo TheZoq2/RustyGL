@@ -8,7 +8,13 @@ pub struct ObjectData
     pub faces: Vec<u8>,
 }
 
-fn parse_coord_list(coord_strs: &Vec<&str>) -> [f32; 3]
+fn add_vertex(vert: [f32; 3], obj_data: &mut ObjectData)
+{
+    obj_data.verts.push(vert);
+    obj_data.normals.push([0.0, 0.0, 0.0]);
+}
+
+fn parse_coord_line(coord_strs: &Vec<&str>) -> [f32; 3]
 {
     const COORD_AMOUNT :usize = 3;
     let mut curr_index = 0;
@@ -29,10 +35,15 @@ fn parse_coord_list(coord_strs: &Vec<&str>) -> [f32; 3]
 
     return coords;
 }
+fn parse_face_line(face_strs: &Vec<&str>, obj_data: &mut ObjectData)
+{
+    
+}
 
 pub fn load_obj_file(path :&String) -> ObjectData
 {
     let mut obj_data = ObjectData{verts: vec!(), normals: vec!(), uvs: vec!(), faces: vec!()};
+    let mut normal_list: Vec<[f32; 3]> = vec!();
 
     let file_content: String = files::load_whole_file(path);
 
@@ -58,14 +69,15 @@ pub fn load_obj_file(path :&String) -> ObjectData
         }
 
 
-        //let rest_of_line = segments[1..];
+        //let rest_of_line = segments[1..];==> No kernel 4.5.1-1-ARCH headers. You must install them to use DKMS!
         let mut rest_of_line: Vec<&str> = Vec::new();
         rest_of_line.clone_from_slice(&(segments[1..]));
 
         match segments[0]
         {
-            "v" => obj_data.verts.push(parse_coord_list(&rest_of_line)),
-            "vn" => obj_data.verts.push(parse_coord_list(&rest_of_line)),
+            "v" => obj_data.verts.push(parse_coord_line(&rest_of_line)),
+            "vn" => normal_list.push(parse_coord_line(&rest_of_line)),
+            "f" => parse_face_line(&rest_of_line, &mut obj_data),
             _ => println!("Unknown obj file part: {} when loading {}", segments[0], path)
         }
     }
