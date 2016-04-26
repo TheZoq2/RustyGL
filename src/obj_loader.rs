@@ -1,3 +1,5 @@
+extern crate nalgebra as na;
+
 use files;
 
 pub struct ObjectData
@@ -41,7 +43,8 @@ fn parse_face_line(face_strs: &Vec<&str>, obj_data: &mut ObjectData, normal_list
     {
         let face_params: Vec<&str> = face_strs.split("/").collect();
 
-        if segments.len() == 3
+        //Ensuring that we have the correct amount of parenthesies
+        if face_params.len() == 3
         {
             let mut face_index = 0;
             let mut normal_index = 0;
@@ -58,9 +61,12 @@ fn parse_face_line(face_strs: &Vec<&str>, obj_data: &mut ObjectData, normal_list
             }
 
             //We have loaded all the index data, add it to the model.
-            let added_normal = normal_list[normal_index];
+            let added_normal = na::Vec3::new(normal_list[normal_index]);
+            let old_normal = obj_data.normals[face_index];
 
-            obj_data.normals[added_normal] += added_normal;
+            let new_normal = added_normal + old_normal;
+
+            obj_data.normals[face_index] = new_normal.as_slice().clone();
         }
         else
         {
