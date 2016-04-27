@@ -41,7 +41,7 @@ fn parse_face_line(face_strs: &Vec<&str>, obj_data: &mut ObjectData, normal_list
 {
     for face in face_strs
     {
-        let face_params: Vec<&str> = face_strs.split("/").collect();
+        let face_params: Vec<&str> = face.split("/").collect();
 
         //Ensuring that we have the correct amount of parenthesies
         if face_params.len() == 3
