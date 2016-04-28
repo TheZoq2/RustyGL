@@ -46,27 +46,27 @@ fn parse_face_line(face_strs: &Vec<&str>, obj_data: &mut ObjectData, normal_list
         //Ensuring that we have the correct amount of parenthesies
         if face_params.len() == 3
         {
-            let mut face_index = 0;
-            let mut normal_index = 0;
+            let mut face_index = 0 as usize;
+            let mut normal_index = 0 as usize;
 
             match face_params[0].parse::<u32>()
             {
-                Ok(val) => face_index = val,
+                Ok(val) => face_index = val as usize,
                 Err(e) => panic!("Failed to load .obj file, malformed vertex index in face. {}\n{}", face_params[0], e)
             }
             match face_params[0].parse::<u32>()
             {
-                Ok(val) => normal_index = val,
+                Ok(val) => normal_index = val as usize,
                 Err(e) => panic!("Failed to load .obj file, malformed normal index in face. {}\n{}", face_params[0], e)
             }
 
             //We have loaded all the index data, add it to the model.
-            let added_normal = na::Vec3::new(normal_list[normal_index]);
-            let old_normal = obj_data.normals[face_index];
+            let added_normal = na::Vec3::new(normal_list[normal_index][0], normal_list[normal_index][1], normal_list[normal_index][2]);
+            let old_normal = na::Vec3::new(obj_data.normals[face_index][0], obj_data.normals[face_index][1], obj_data.normals[face_index][2]);
 
             let new_normal = added_normal + old_normal;
 
-            obj_data.normals[face_index] = new_normal.as_slice().clone();
+            obj_data.normals[face_index] = [new_normal[0], new_normal[1], new_normal[2]];
         }
         else
         {
@@ -112,7 +112,7 @@ pub fn load_obj_file(path :&String) -> ObjectData
         {
             "v" => obj_data.verts.push(parse_coord_line(&rest_of_line)),
             "vn" => normal_list.push(parse_coord_line(&rest_of_line)),
-            "f" => parse_face_line(&rest_of_line, &mut obj_data),
+            "f" => parse_face_line(&rest_of_line, &mut obj_data, &mut normal_list),
             _ => println!("Unknown obj file part: {} when loading {}", segments[0], path)
         }
     }
