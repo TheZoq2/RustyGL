@@ -175,6 +175,9 @@ fn main()
                             .build_glium()
                             .unwrap();
 
+
+    let object_data = obj_loader::load_obj_file(&"data/test.obj".to_string());
+
     let test_verts = vec!{
             model_data::Vertex{position: ( 1.0,  0.0,  0.0)},
             model_data::Vertex{position: ( 0.0,  1.0,  0.0)},
@@ -203,7 +206,8 @@ fn main()
         3,4,5,
         3,5,1,
     };
-    let mut test_object = static_object::StaticObject::new(&display, &test_verts, &test_normals, &test_indices);
+    //let mut test_object = static_object::StaticObject::new(&display, &test_verts, &test_normals, &test_indices);
+    let mut test_object = static_object::StaticObject::new(&display, &object_data.verts, &object_data.normals, &object_data.faces);
 
     let mut model_matrix = [
         [1.0, 0.0, 0.0, 0.0],
@@ -275,7 +279,7 @@ fn main()
 
         target.draw((&vertex_buffer, &normal_buffer), &indices, &shader_program, &uniforms, &params).unwrap();
 
-        test_object.set_position(&na::Vec4::new(t.cos(), 0.0, 0.0, 1.0));
+        test_object.set_position(&na::Vector4::new(t.cos(), 0.0, 0.0, 1.0));
         test_object.draw(&mut target, &shader_program, &world_buffer, &sphere_buffer, &params);
 
         //Finish drawing and send the result off to the window
