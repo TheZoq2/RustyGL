@@ -104,8 +104,10 @@ pub fn load_obj_file(path :&String) -> ObjectData
         }
 
 
-        //let rest_of_line = segments[1..];==> No kernel 4.5.1-1-ARCH headers. You must install them to use DKMS!
         let mut rest_of_line: Vec<&str> = Vec::new();
+
+        println!("Segment length: {}", segments.len());
+
         rest_of_line.clone_from_slice(&(segments[1..]));
 
         match segments[0]

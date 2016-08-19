@@ -88,55 +88,6 @@ fn get_view_matrix(position: &[f32; 3], direction: &[f32; 3]) -> [[f32; 4]; 4]
 }
 
 
-fn get_basic_shader(display: &glium::backend::glutin_backend::GlutinFacade) -> glium::Program
-{
-    let vertex_shader_src = r#"
-        #version 140
-
-        in vec3 position;
-        in vec3 normal;
-
-        uniform mat4 modelMatrix;
-
-        uniform worldData
-        {
-            mat4 view_matrix;
-            mat4 projection_matrix;
-        };
-
-        out vec3 vertex_color;
-
-        vec4 pos;
-
-        void main()
-        {
-            mat4 modelViewMatrix = view_matrix * modelMatrix;
-            pos = projection_matrix * modelViewMatrix * (vec4(position, 1.0));
-
-            vertex_color = (position.xyz + vec3(1, 1, 1)) / 2;
-
-            gl_Position = pos;
-        }
-    "#;
-    let fragment_shader_src = r#"
-        #version 140
-
-        in vec3 position;
-
-        in vec3 vertex_color;
-
-        out vec4 color;
-
-        void main()
-        {
-            color = vec4(vertex_color, 1.0);
-        }
-    "#;
-
-    //Set up the shader
-    glium::Program::from_source(display, vertex_shader_src, fragment_shader_src, None).unwrap()
-}
-
 fn load_shader(display: &glium::Display, vert_path: &String, frag_path: &String)
     -> glium::Program
 {
@@ -169,6 +120,8 @@ fn get_perspective_matrix(target: &glium::Frame) -> [[f32; 4]; 4]
 fn main() 
 {
     let mut t: f32 = 0.0;
+
+    let loaded_obj = obj_loader::load_obj_file(&"data/models/monkey.obj".to_string());
 
     let display = glium::glutin::WindowBuilder::new()
                             .with_depth_buffer(24)
@@ -213,7 +166,6 @@ fn main()
     ];
 
 
-    //let shader_program = get_basic_shader(&display);
     let shader_program = load_shader(&display, &"data/shaders/basic.vert".to_string(), &"data/shaders/basic.frag".to_string());
 
 
