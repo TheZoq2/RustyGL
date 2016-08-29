@@ -6,7 +6,7 @@ use global_render_params;
 use lights;
 
 use glium::Surface;
-use na::Col;
+use na::Column;
 
 pub struct StaticObject
 {
@@ -18,7 +18,7 @@ pub struct StaticObject
     pub normal_buffer: glium::VertexBuffer<model_data::Normal>,
     pub index_buffer: glium::IndexBuffer<u16>,
 
-    pub transform: na::Mat4<f32>
+    pub transform: na::Matrix4<f32>
 }
 
 impl StaticObject
@@ -61,10 +61,11 @@ impl StaticObject
                         draw_parameters).unwrap();
     }
 
-    pub fn set_position(&mut self, pos: &na::Vec4<f32>)
+    pub fn set_position(&mut self, pos: &na::Vector4<f32>)
     {
         //na::translate(&self.transform, offset);
-        self.transform.set_col(3, pos.clone());
+        self.transform.set_column(3, pos.clone());
+        //println!("{}", self.transform.ncols());
     }
 }
 
